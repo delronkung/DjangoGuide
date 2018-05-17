@@ -10,11 +10,10 @@
 HttpResponse(content=响应体, content_type=响应体数据类型, status=状态码)
 ```
 
-也可通过HttpResponse对象属性来设置响应体、响应体数据类型、状态码：
+也可通过HttpResponse对象属性来设置响应体、状态码：
 
 - content：表示返回的内容。
 - status_code：返回的HTTP响应状态码。
-- content_type：指定返回数据的的MIME类型。
 
 响应头可以直接将HttpResponse对象当做字典进行响应头键值对的设置：
 
