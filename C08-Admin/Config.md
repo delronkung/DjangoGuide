@@ -42,6 +42,10 @@ http://127.0.0.1:8000/admin/
 
 ![admin默认首页](/images/admin_index.png)
 
+> 如果想要修改密码可以执行
+>
+> python manage.py changepassword 用户名
+
 ## 3  注册模型类
 
 登录后台管理后，默认没有我们创建的应用中定义的模型类，需要在自己应用中的admin.py文件中注册，才可以在后台管理中看到，并进行增删改查操作。
