@@ -192,44 +192,6 @@ class DemoView(View):
         return HttpResponse('ok')
 ```
 
-#### 为什么需要使用method_decorator???
-
-为函数视图准备的装饰器，其被调用时，第一个参数用于接收request对象
-
-```python
-def my_decorate(func):
-    def wrapper(request, *args, **kwargs):  # 第一个参数request对象
-        ...代码省略...
-        return func(request, *args, **kwargs)
-    return wrapper
-```
-
-而类视图中请求方法被调用时，传入的第一个参数不是request对象，而是self 视图对象本身，第二个位置参数才是request对象
-
-```python
-class DemoView(View):
-    def dispatch(self, request, *args, **kwargs):
-        ...代码省略...
-        
-    def get(self, request):
-        ...代码省略...
-```
-
-所以如果直接将用于函数视图的装饰器装饰类视图方法，会导致参数传递出现问题。
-
-**method_decorator的作用是为函数视图装饰器补充第一个self参数，以适配类视图方法。**
-
-如果将装饰器本身改为可以适配类视图方法的，类似如下，则无需再使用method_decorator。
-
-```python
-def my_decorator(func):
-    def wrapper(self, request, *args, **kwargs):  # 此处增加了self
-        print('自定义装饰器被调用了')
-        print('请求路径%s' % request.path)
-        return func(self, request, *args, **kwargs)  # 此处增加了self
-    return wrapper
-```
-
 ## 5 类视图Mixin扩展类
 
 使用面向对象多继承的特性，可以通过定义父类（作为扩展类），在父类中定义想要向类视图补充的方法，类视图继承这些扩展父类，便可实现代码复用。
