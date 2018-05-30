@@ -95,7 +95,7 @@ urlpatterns = [
 
 ## 4 类视图使用装饰器
 
-为类视图添加装饰器，可以使用三种方法。
+为类视图添加装饰器，可以使用两种方法。
 
 为了理解方便，我们先来定义一个**为函数视图准备的装饰器**（在设计装饰器时基本都以函数视图作为考虑的被装饰对象），及一个要被装饰的类视图。
 
@@ -230,26 +230,47 @@ def my_decorator(func):
     return wrapper
 ```
 
-### 4.3 构造Mixin扩展类
+## 5 类视图Mixin扩展类
 
-使用面向对象多继承的特性。
+使用面向对象多继承的特性，可以通过定义父类（作为扩展类），在父类中定义想要向类视图补充的方法，类视图继承这些扩展父类，便可实现代码复用。
+
+定义的扩展父类名称通常以Mixin结尾。
+
+举例如下：
 
 ```python
-class MyDecoratorMixin(object):
-    @classmethod
-    def as_view(cls, *args, **kwargs):
-        view = super().as_view(*args, **kwargs)
-        view = my_decorator(view)
-        return view
-
-class DemoView(MyDecoratorMixin, View):
+class ListModelMixin(object):
+    """
+    list扩展类
+    """
+    def list(self, request, *args, **kwargs):
+        ...
+        
+class CreateModelMixin(object):
+    """
+    create扩展类
+    """
+    def create(self, request, *args, **kwargs):
+        ...
+        
+class BooksView(CreateModelMixin, ListModelMixin, View):
+    """
+    同时继承两个扩展类，复用list和create方法
+    """
     def get(self, request):
-        print('get方法')
-        return HttpResponse('ok')
+        self.list(request)
+        ...
 
     def post(self, request):
-        print('post方法')
-        return HttpResponse('ok')
+        self.create(request)
+        ...
+
+class SaveOrderView(CreateModelMixin, View):
+    """
+    继承CreateModelMixin扩展类，复用create方法
+    """
+    def post(self, request):
+        self.create(request)
+        ...
 ```
 
-**使用Mixin扩展类，也会为类视图的所有请求方法都添加装饰行为。**
