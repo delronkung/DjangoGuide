@@ -133,39 +133,7 @@ urlpatterns = [
 
 在类视图中使用为函数视图准备的装饰器时，不能直接添加装饰器，需要使用**method_decorator**将其转换为适用于类视图方法的装饰器。
 
-```python
-from django.utils.decorators import method_decorator
-
-# 为全部请求方法添加装饰器
-class DemoView(View):
-    
-    @method_decorator(my_decorator)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
-    def get(self, request):
-        print('get方法')
-        return HttpResponse('ok')
-
-    def post(self, request):
-        print('post方法')
-        return HttpResponse('ok')
-    
-    
-# 为特定请求方法添加装饰器
-class DemoView(View):
-    
-    @method_decorator(my_decorator)
-    def get(self, request):
-        print('get方法')
-        return HttpResponse('ok')
-
-    def post(self, request):
-        print('post方法')
-        return HttpResponse('ok')
-```
-
-**method_decorator装饰器还支持使用name参数指明被装饰的方法**
+**method_decorator装饰器使用name参数指明被装饰的方法**
 
 ```python
 # 为全部请求方法添加装饰器
@@ -189,6 +157,29 @@ class DemoView(View):
 
     def post(self, request):
         print('post方法')
+        return HttpResponse('ok')
+```
+
+**如果需要为类视图的多个方法添加装饰器，但又不是所有的方法（为所有方法添加装饰器参考上面例子），可以直接在需要添加装饰器的方法上使用method_decorator，如下所示**
+
+```python
+from django.utils.decorators import method_decorator
+
+# 为特定请求方法添加装饰器
+class DemoView(View):
+    
+    @method_decorator(my_decorator)  # 为get方法添加了装饰器
+    def get(self, request):
+        print('get方法')
+        return HttpResponse('ok')
+
+    @method_decorator(my_decorator)  # 为post方法添加了装饰器
+    def post(self, request):
+        print('post方法')
+        return HttpResponse('ok')
+    
+    def put(self, request):  # 没有为put方法添加装饰器
+        print('put方法')
         return HttpResponse('ok')
 ```
 
